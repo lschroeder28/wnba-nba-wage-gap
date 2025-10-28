@@ -21,7 +21,13 @@ est.share.league.revenue.players.WNBA.NBA <- read.csv("C:/Users/schro/Downloads/
 ```{r}
 highest.paid.players.NBA <-
   highest.paid.players.NBA |>
-  mutate(team = str_extract(player, "\\(.*?\\)"))
+  separate(player, into = c("player", "team"), sep = "\\(") |>
+  mutate(league = "NBA", salary_in_M = salary, salaries = salary_in_M*1000000) |> select(league, player, salaries, team)
+
+highest.paid.players.WNBA <- highest.paid.players.WNBA |>
+  mutate(league = "WNBA", salaries = salary) |> select(league, player, salaries, team)
+
+highest.paid.players <- bind_rows(highest.paid.players.NBA, highest.paid.players.WNBA)
 
 nba_data_2024 <- 
   left_join(teams.by.player.salaries.NBA, `team.by.revenue.23-24.NBA`, by = "team") |>
@@ -51,9 +57,9 @@ combined_data |>
 
 #compares team salaries to team revenue
 nba_data_2024 |>
-  mutate(Payroll_ = payroll_in_.M, Revenue_ = revenue_in_.M) |>
-  select(team, Payroll_, Revenue_, league) |>
-  pivot_longer(cols = ends_with("_"), names_to = "variable", values_to = "value" ) |>
+  mutate(Payroll = payroll_in_.M, Revenue = revenue_in_.M) |>
+  select(team, Payroll, Revenue) |>
+  pivot_longer(cols = -team, names_to = "variable", values_to = "value" ) |>
   ggplot(mapping = aes(x = team, y = value, fill = variable)) +
   geom_col(width = .8, position = "dodge", col = "white") +
   coord_flip() +
@@ -62,9 +68,9 @@ nba_data_2024 |>
   labs(title = "2024 Season Payroll vs. Revenue of NBA Teams", x = "Team", y = "Millions of Dollars", fill = " ")
 
 wnba_data_2024 |>
-  mutate(Payroll_ = payroll_in_.M, Revenue_ = revenue_in_.M) |>
-  select(team, Payroll_, Revenue_, league) |>
-  pivot_longer(cols = ends_with("_"), names_to = "variable", values_to = "value" ) |>
+  mutate(Payroll = payroll_in_.M, Revenue = revenue_in_.M) |>
+  select(team, Payroll, Revenue) |>
+  pivot_longer(cols = -team, names_to = "variable", values_to = "value" ) |>
   ggplot(mapping = aes(x = team, y = value, fill = variable)) +
   geom_col(width = .8, position = "dodge", col = "white") +
   coord_flip() +
@@ -81,8 +87,8 @@ wnba_data_2024 |>
 
 combined_data |>
   group_by(league) |>
-  summarize(total_salaries_in_.M = sum(payroll_in_.M), total_revenue_in_.M = sum(revenue_in_.M)) |>
-  pivot_longer(cols = ends_with(".M"), names_to = "variable", values_to = "value" ) |>
+  summarize(Payroll = sum(payroll_in_.M), Revenue = sum(revenue_in_.M)) |>
+  pivot_longer(cols = -league, names_to = "variable", values_to = "value" ) |>
   ggplot(mapping = aes(x = league, y = value, fill = variable)) +
   geom_col(col = "white", position = "dodge") +
   #scale_y_log10() +
@@ -91,11 +97,23 @@ combined_data |>
 
 combined_data |>
   group_by(league) |>
-  summarize(total_salaries_in_.M = sum(payroll_in_.M), total_revenue_in_.M = sum(revenue_in_.M)) |>
-  pivot_longer(cols = ends_with(".M"), names_to = "variable", values_to = "value" ) |>
+  summarize(Payroll = sum(payroll_in_.M), Revenue = sum(revenue_in_.M)) |>
+  select(league, Payroll, Revenue) |>
+  pivot_longer(cols = -league, names_to = "variable", values_to = "value" ) |>
   ggplot(mapping = aes(x = variable, y = value)) +
   geom_col() +
   facet_wrap(vars(league)) +
-  theme_minimal()
+  theme_minimal() +
+  labs(title = "Estimated Share of League Revenue in Annual Wages of Players in NBA and WNBA in 2024", x = "Type", y = "Millions of Dollars")
+
+#highest paid players in each league
+highest.paid.players |>
+  ggplot(mapping = aes(x = player, y = salaries, fill = league)) +
+  geom_col() +
+  scale_y_log10() +
+  coord_flip() +
+  theme_minimal() +
+  labs(title = "Highest Paid Players in NBA and WNBA in 2024", x = "Player", y = "Salary", fill = "League")
+
 ```
 
