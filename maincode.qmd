@@ -54,7 +54,7 @@ combined_data |>
   geom_col(position = "dodge") +
   coord_flip() +
   theme_minimal() +
-  labs(title = str_wrap("Average attendance of NBA and WNBA games by team during the 2024 season"), x = "Team", y = "Average Attendance", fill = "League")
+  labs(title = str_wrap("Average attendance of NBA and WNBA games by team during the 2024 season", width = 60), x = "Team", y = "Average Attendance", fill = "League")
 
 #compares team salaries to team revenue
 nba_data_2024 |>
@@ -66,7 +66,7 @@ nba_data_2024 |>
   coord_flip() +
   scale_y_log10() +
   theme_minimal() +
-  labs(title = str_wrap("2024 Season Payroll vs. Revenue of NBA Teams"), x = "Team", y = "Millions of Dollars", fill = " ")
+  labs(title = str_wrap("2024 Season Payroll vs. Revenue of NBA Teams", width = 60), x = "Team", y = "Millions of Dollars", fill = " ")
 
 wnba_data_2024 |>
   mutate(Payroll = payroll_in_.M, Revenue = revenue_in_.M) |>
@@ -77,14 +77,14 @@ wnba_data_2024 |>
   coord_flip() +
   scale_y_log10() +
   theme_minimal() +
-  labs(title = str_wrap("2024 Season Payroll vs. Revenue of WNBA Teams"), x = "Team", y = "Millions of Dollars", fill = " ", line = "League Revenue")
+  labs(title = str_wrap("2024 Season Payroll vs. Revenue of WNBA Teams", width = 60), x = "Team", y = "Millions of Dollars", fill = " ", line = "League Revenue")
 
 #given ratio between NBA and WNBA
 `league,share_of_league_revenue` |>
   ggplot(mapping = aes(x = league, y = share_of_league_revenue)) +
   geom_col(col = "white") +
   theme_minimal() +
-  labs(title = str_wrap("Estimated Share of League Revenue in Annual Wages of Players in the NBA and WNBA in 2024"), x = "League", y = "Percent of Revenue")
+  labs(title = str_wrap("Estimated Share of League Revenue in Annual Wages of Players in the NBA and WNBA in 2024", width = 60), x = "League", y = "Percent of Revenue")
 
 combined_data |>
   group_by(league) |>
@@ -92,9 +92,8 @@ combined_data |>
   pivot_longer(cols = -league, names_to = "variable", values_to = "value" ) |>
   ggplot(mapping = aes(x = league, y = value, fill = variable)) +
   geom_col(col = "white", position = "dodge") +
-  #scale_y_log10() +
   theme_minimal() +
-  labs(title = str_wrap("Estimated Share of League Revenue in Annual Wages of Players in the NBA and WNBA in 2024"), x = "League", y = "Log Scale in $M", fill = " ")
+  labs(title = str_wrap("Estimated Share of League Revenue in Annual Wages of Players in the NBA and WNBA in 2024", width = 60), x = "League", y = "Log Scale in $M", fill = " ")
 
 combined_data |>
   group_by(league) |>
@@ -105,7 +104,7 @@ combined_data |>
   geom_col() +
   facet_wrap(vars(league)) +
   theme_minimal() +
-  labs(title = str_wrap("Estimated Share of League Revenue in Annual Wages of Players in NBA and WNBA in 2024"), x = "Type", y = "Millions of Dollars")
+  labs(title = str_wrap("Estimated Share of League Revenue in Annual Wages of Players in NBA and WNBA in 2024", width = 60), x = "Type", y = "Millions of Dollars")
 
 #highest paid players in each league
 highest.paid.players |>
@@ -114,7 +113,7 @@ highest.paid.players |>
   scale_y_log10() +
   coord_flip() +
   theme_minimal() +
-  labs(title = str_wrap("Highest Paid Players in NBA and WNBA in 2024"), x = "Player", y = "Salary", fill = "League")
+  labs(title = str_wrap("Highest Paid Players in NBA and WNBA in 2024", width = 60), x = "Player", y = "Salary", fill = "League")
 
 ```
 
